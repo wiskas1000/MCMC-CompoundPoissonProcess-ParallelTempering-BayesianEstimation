@@ -11,5 +11,5 @@ Reference: thesis
 
 ## Usage
 1. Make sure that Julia v0.6 or above is installed
-2. Execute using 4 processors
+2. Execute with 4 processors using the command:
 > julia -p 4 master.jl
