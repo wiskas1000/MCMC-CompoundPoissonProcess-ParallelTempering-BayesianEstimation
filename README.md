@@ -8,3 +8,8 @@ Fresh restart of the original implementations. Implemented are Parallel Temperin
 An older, single core, implementation exists for julia v0.4 and might be published.
 
 Reference: thesis
+
+## Usage
+1. Make sure that Julia v0.6 or above is installed
+2. Execute using 4 processors
+> julia -p 4 master.jl
