@@ -5,7 +5,7 @@ const workerid = myid() - 1
 const mygamma = zeros(Float64, 1)
 
 export workerid, mygamma
-export getMyGamma
+export getMyGamma, setMyGamma
 
 function getMyGamma()
     return mygamma
