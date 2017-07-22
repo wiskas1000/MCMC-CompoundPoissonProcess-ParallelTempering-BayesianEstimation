@@ -11,6 +11,11 @@ function getMyGamma()
     return mygamma
 end
 
+function setMyGamma(newGamma::Float64)
+    mygamma[1] = newGamma
+    return
+end
+
 end
 
 
