@@ -3,17 +3,26 @@ using Distributions
 
 const workerid = myid() - 1
 const mygamma = zeros(Float64, 1)
+# myPathTMPStream::AbstractString
 
 export workerid, mygamma
-export getMyGamma, setMyGamma
+export getMyGamma, setMyGamma, setMyPathTMPStream, getMyPathTMPStream
 
-function getMyGamma()
-    return mygamma
+function getMyGamma()::Float64
+    return mygamma[1]
 end
 
 function setMyGamma(newGamma::Float64)
     mygamma[1] = newGamma
     return
+end
+
+function setMyPathTMPStream(pathTMPStream::AbstractString)
+    global myPathTMPStream = joinpath(pathTMPStream, string(workerid))
+end
+
+function getMyPathTMPStream()::AbstractString
+    return myPathTMPStream
 end
 
 end
