@@ -5,14 +5,17 @@
 include("ParallelTemperingCPP.jl")
 
 const gamma_temperatures = Array{Float64, 1}(4)
-gamma_temperatures[1:4] = [1.0, 1.0 + 1e-4, 1.0 + 2e-4, 1.0 + 3e-4] 
-info(gamma_temperatures)
+const G = length(gamma_temperatures)
+gamma_temperatures[1:G] = [1.0, 1.0 + 1e-4, 1.0 + 2e-4, 1.0 + 3e-4]
+@broadcast G = getfrom(1, :G)
+@broadcast const gamma_temperatures = getfrom(1, :gamma_temperatures)
+
+@everywhere info(G)
+@everywhere info(gamma_temperatures)
+# @broadcast G = length(getfrom(1, :gamma_temperatures))
+
 
 pathTMPStream = "/home/wikash/Documents/Simulations/"
-
-
-# @everywhere remotecall_fetch(getindex, 1, gamma_temperatures, 1)
-
 
 
 # gamma = SharedArray(Int32, G, init = S -> S[Base.localindexes(S)] = myid())
@@ -21,9 +24,14 @@ pathTMPStream = "/home/wikash/Documents/Simulations/"
 
 @everywhere include("parallel-startup.jl")
 @everywhere using PTstartup
-@everywhere println(getMyGamma())
-@everywhere setMyPathTMPStream(getfrom(1, :pathTMPStream))
-@everywhere println(getMyPathTMPStream())
+
+@broadcast setIndexMyGamma(idWorker)
+@broadcast setMyPathTMPStream(getfrom(1, :pathTMPStream))
+@broadcast getIndexMyGamma()
+@broadcast getMyPathTMPStream()
+
+# @everywhere println(getMyGamma())
+# @everywhere println(getMyPathTMPStream())
 
 # @everywhere info(id)
 # @everywhere info(G)
@@ -56,3 +64,4 @@ pathTMPStream = "/home/wikash/Documents/Simulations/"
 # gamma_temperatures[3] = 1 + 2e-4
 # gamma_temperatures[4] = 1 + 3e-4
 # info(gamma_temperatures)
+

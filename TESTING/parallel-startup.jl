@@ -1,24 +1,35 @@
 module PTstartup
 using Distributions
 
-const workerid = myid() - 1
-const mygamma = zeros(Float64, 1)
+const idWorker = myid() - 1
+const myGamma = zeros(Float64, 1)
+const idMyGamma = zeros(Int64, 1)
 # myPathTMPStream::AbstractString
 
-export workerid, mygamma
-export getMyGamma, setMyGamma, setMyPathTMPStream, getMyPathTMPStream
+export idWorker, idMyGamma, myGamma
+export getMyGamma, setMyGamma, getIndexMyGamma, setIndexMyGamma, setMyPathTMPStream, getMyPathTMPStream
+
+function getIndexMyGamma()::Int64
+    return idMyGamma[1]
+end
+
+function setIndexMyGamma(newIndex::Int64)
+    idMyGamma[1] = newIndex
+    return
+end
 
 function getMyGamma()::Float64
-    return mygamma[1]
+    return myGamma[1]
 end
 
 function setMyGamma(newGamma::Float64)
-    mygamma[1] = newGamma
+    myGamma[1] = newGamma
     return
 end
 
 function setMyPathTMPStream(pathTMPStream::AbstractString)
-    global myPathTMPStream = joinpath(pathTMPStream, string(workerid))
+    global myPathTMPStream = joinpath(pathTMPStream, string(idWorker))
+    # myPathTMPStreams = Array{AbstractString, 1}(G)
 end
 
 function getMyPathTMPStream()::AbstractString
