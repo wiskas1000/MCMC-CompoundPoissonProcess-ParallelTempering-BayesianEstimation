@@ -1,14 +1,14 @@
-@everywhere using PTstartup
-@everywhere println(getMyGamma())
+# @everywhere using PTstartup
+# @everywhere println(getMyGamma())
 
-# function fWriteBinary(stream::IOStream, param::Float64, M::Int64)
-#     for i = 1:M
-#         write(stream, i + param)
-#         # flush(stream)
-#         write(stream, 3.14)
-#     end
-#     return
-# end
+function fWriteBinary(stream::IOStream, param::Float64, M::Int64)
+    for i = 1:M
+        write(stream, i + param)
+        # flush(stream)
+        write(stream, 3.14)
+    end
+    return
+end
 
 # function fWriteBinary32(stream::IOStream, param::Float32, M::Int32)
 #     for i = 1:M
@@ -20,25 +20,27 @@
 # end
 
 
-# function fWriteText(stream::IOStream, param::Float64, M::Int64)
-#     for i = 1:M
-#         println(stream, i + param)
-#         println(stream, 3.14)
-#         flush(stream)
-#     end
-#     return
-# end
+function fWriteText(stream::IOStream, param::Float64, M::Int64)
+    for i = 1:M
+        println(stream, i + param)
+        println(stream, 3.14)
+        flush(stream)
+    end
+    return
+end
 
-# testfile1 = "testfile1.dat"
-# testfile2 = "testfile2.dat"
-# stream1 = open(testfile1, "w")
-# stream2 = open(testfile2, "w")
+testfile1 = "testfile1.dat"
+testfile2 = "testfile2.dat"
+stream1 = open(testfile1, "w")
+stream2 = open(testfile2, "w")
 # M = 9
 # M32 = Int32(15000000)
-# param = 0.5
+param = 0.5
 # param32 = Float32(0.5)
 
-# @time fWriteBinary(stream1, param, M)
+
+@time fWriteBinary(stream1, param, M)
+@time fWriteBinary(stream2, param, M)
 # # @time fWriteBinary32(stream2, param32, M32)
 # # @time fWriteText(stream2, param, M)
 

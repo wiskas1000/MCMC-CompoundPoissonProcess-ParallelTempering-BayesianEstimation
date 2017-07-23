@@ -1,6 +1,7 @@
  # Pkg.add("ParallelDataTransfer")
 # @everywhere using ParallelTemperingCPP
 @everywhere using ParallelDataTransfer
+@everywhere using JLD2
 # W. SEWLAL 1383337 # 2015-12-03
 include("ParallelTemperingCPP.jl")
 
@@ -10,33 +11,20 @@ gamma_temperatures[1:G] = [1.0, 1.0 + 1e-4, 1.0 + 2e-4, 1.0 + 3e-4]
 @broadcast G = getfrom(1, :G)
 @broadcast const gamma_temperatures = getfrom(1, :gamma_temperatures)
 
-@everywhere info(G)
-@everywhere info(gamma_temperatures)
-# @broadcast G = length(getfrom(1, :gamma_temperatures))
+# @everywhere info(G)
+# @everywhere info(gamma_temperatures)
 
-
-pathTMPStream = "/home/wikash/Documents/Simulations/"
-
-
-# gamma = SharedArray(Int32, G, init = S -> S[Base.localindexes(S)] = myid())
-# mygamma = SharedArray(Float64, G, pids=workers())
-# @everywhere gamma = SharedArray(Int32, G)
+pathTMPStream = "/home/wikash/Documents/Simulations/TMP/"
 
 @everywhere include("parallel-startup.jl")
 @everywhere using PTstartup
 
 @broadcast setIndexMyGamma(idWorker)
 @broadcast setMyPathTMPStream(getfrom(1, :pathTMPStream))
-@broadcast getIndexMyGamma()
-@broadcast getMyPathTMPStream()
+@broadcast println(gamma_temperatures[getIndexMyGamma()])
+# @broadcast println(getIndexMyGamma())
+# @broadcast println(getMyPathTMPStream())
 
-# @everywhere println(getMyGamma())
-# @everywhere println(getMyPathTMPStream())
-
-# @everywhere info(id)
-# @everywhere info(G)
-# @everywhere info(workerid)
-# @everywhere info(mygamma)
 
 # @everywhere @time sleep(3)
 # @everywhere info(gamma[2])
@@ -65,3 +53,61 @@ pathTMPStream = "/home/wikash/Documents/Simulations/"
 # gamma_temperatures[4] = 1 + 3e-4
 # info(gamma_temperatures)
 
+# gamma = SharedArray(Int32, G, init = S -> S[Base.localindexes(S)] = myid())
+# mygamma = SharedArray(Float64, G, pids=workers())
+# @everywhere gamma = SharedArray(Int32, G)
+
+function fWriteText(stream::IOStream, param::Float64, M::Int64)
+    for i = 1:M
+        println(stream, i + param)
+        println(stream, 3.14)
+        # flush(stream)
+    end
+    return
+end
+
+
+function fWriteBinary(stream::IOStream, param::Float64, M::Int64)
+    for i = 1:M
+        write(stream, i + param)
+        # flush(stream)
+        write(stream, 3.14)
+    end
+    return
+end
+
+testfile1 = "testfile1.dat"
+testfile2 = "testfile2.dat"
+stream1 = open(testfile1, "a")
+stream2 = open(testfile2, "a")
+M = 9
+param = 0.5
+
+@time fWriteBinary(stream1, param, M)
+# @time fWriteText(stream1, param, M)
+flush(stream1)
+# @time sleep(10)
+# # @time fWriteText(stream1, param, M + 10)
+# @time fWriteBinary(stream1, param, M)
+# @time fWriteBinary(stream2, param, M)
+close(stream1)
+# close(stream2)
+
+# readF = open(testfile1, "r")
+# readF do 
+# open(testfile1,"r") do f
+    # asdf = read(f)
+    # for i in asdf
+    #     println(i)
+    # end
+    # seekstart(f)
+    # for i in f
+    #     println(typeof(i))
+    # # for i in f
+    # end
+# end
+   # readline(f)
+
+
+# group LAMBDA
+# iteration 1 ....
