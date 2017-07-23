@@ -1,4 +1,6 @@
 *sublime*
+*.jld2
+*.csv
 *.dat
 *.jl.cov
 *.jl.*.cov
