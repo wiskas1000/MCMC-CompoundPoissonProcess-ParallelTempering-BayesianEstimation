@@ -6,6 +6,7 @@ using Distributions
 
 # include("Z.jl")
 # export getZ
+include("generate-dataset.jl")
 
 # include("parallel-startup.jl")
 # include("MH-main-functions.jl")

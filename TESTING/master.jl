@@ -8,17 +8,24 @@ gamma_temperatures[1:G] = [1.0, 1.0 + 1e-4, 1.0 + 2e-4, 1.0 + 3e-4]
 @broadcast G = getfrom(1, :G)
 @broadcast const gamma_temperatures = getfrom(1, :gamma_temperatures)
 
-pathTMPStream = "/home/wikash/Documents/Simulations/TMP/"
+pathSimulationSaveFiles = "/home/wikash/Documents/Simulations/"
 
 @everywhere include("parallel-startup.jl")
+@everywhere include("FileIOExtensionsCPP.jl")
 @everywhere using PTstartup
+@everywhere using FileIOExtensionsCPP
+
+setupPath(pathSimulationSaveFiles)
+@broadcast setupPath(getfrom(1, :pathSimulationSaveFiles))
 
 @broadcast setIndexMyGamma(idWorker)
-@broadcast setMyPathTMPStream(getfrom(1, :pathTMPStream))
+# @broadcast setMyPathTMPStream(getfrom(1, :pathTMPStream))
+# @broadcast setMyPathTMPStream(getfrom(1, :pathTMPStream))
+@broadcast setMyPathTMPStream(pathTMPStream)
 @broadcast println(gamma_temperatures[getIndexMyGamma()])
 # @broadcast println(getIndexMyGamma())
 # @broadcast println(getMyPathTMPStream())
-
+# @broadcast println(pathSavedZ)
 
 
 duration = 0.06 # Simulation duration (seconds)
