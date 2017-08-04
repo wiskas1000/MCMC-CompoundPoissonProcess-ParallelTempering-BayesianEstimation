@@ -1,5 +1,5 @@
 module PTstartup
-using Distributions
+# using Distributions
 
 const idWorker = myid() - 1
 const myGamma = zeros(Float64, 1)
