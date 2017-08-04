@@ -1,5 +1,6 @@
 # W. SEWLAL 1383337 # 2015-12-03
 using Distributions
+using JLD2
 """
 `generateCPP(N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)`
 
@@ -12,9 +13,7 @@ Keyword arguments
 * `J` : Int64 -- Number of jump types
 * `Delta` : Float64 -- The time between observations, fixed for all observations
 """
-# function initializeZ(N::Int64, J::Int64, Delta::Float64, param::MHiterationParameters)
-# param::MHiterationParameters
-function generateCPP(N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::Array{Float64, 1}
+function generateCPPDataset(N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::Array{Float64, 1}
     # Check size psi, mu
     length(psi) != J && throw(ArgumentError("generateCPP(): psi is not of length J"))
     length(mu) != J && throw(ArgumentError("generateCPP(): mu is not of length J"))
@@ -39,7 +38,54 @@ function generateCPP(N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Ar
     z = original_z[1:nonzeroCounter]
     return z
 end
+# function initializeZ(N::Int64, J::Int64, Delta::Float64, param::MHiterationParameters)
+# param::MHiterationParameters
 
+function saveCPPDataset(dir::AbstractString, N::Int64, z::Array{Float64, 1}, configuration::Int64)
+    savepath = joinpath(dir, string("configuration", configuration))
+    makeDirectory(savepath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, z, configuration)
+    fnameExtension = ".jld2"
+    fnamepath = proposeFilenamePath(fnameBase, fnameExtension, savepath)
+    save(fnamepath, "z", z)
+    return
+end
+
+function saveCPPDataset(dir::AbstractString, N::Int64, z::Array{Float64, 1}, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)
+    savepath = joinpath(dir, "manual")
+    makeDirectory(savepath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, z, J, Delta, labda, psi, mu, tau)
+    fnameExtension = ".jld2"
+    fnamepath = proposeFilenamePath(fnameBase, fnameExtension, savepath)
+    save(fnamepath, "z", z)
+    return
+end
+
+function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, z::Array{Float64, 1}, configuration::Int64)::AbstractString
+    if (N < 1000)
+        fnameBase = string("zCPP-c", configuration, "-N-", N)
+    else
+        fnameBase = string("zCPP-c", configuration, "-N-", round(Int, N / 1000), "k")
+    end
+    return fnameBase
+end
+
+function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, z::Array{Float64, 1}, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::AbstractString
+    if (N < 1000)
+        fnameBase = string("zCPP-manual-N-", N)
+    else
+        fnameBase = string("zCPP-manual-N-", round(Int, N / 1000), "k")
+    end
+    fnameBase = string(fnameBase, "-J", J, "-", Delta, "-", labda, "-", psi, "-", mu,  "-", tau)
+    return fnameBase
+end
+
+
+# function saveCPPDataset(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)
+#     fnameBase = string("zCPP")
+
+#     return
+# end
 
 
 ######### DEPRECATED FUNCTIONS BELOW #########

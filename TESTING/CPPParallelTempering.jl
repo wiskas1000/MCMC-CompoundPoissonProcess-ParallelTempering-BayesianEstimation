@@ -1,12 +1,10 @@
 # W. SEWLAL 1383337 # 2015-12-03
 module CPPParallelTempering
-
-# using fileCheck
 using Distributions
+using FileIOExtensionsCPP
 
-# include("Z.jl")
-# export getZ
 include("generate-dataset.jl")
+export generateCPPDataset, saveCPPDataset
 
 # include("parallel-startup.jl")
 # include("MH-main-functions.jl")

@@ -54,11 +54,12 @@ end
 @everywhere include("CPPParallelTempering.jl")
 @everywhere using CPPParallelTempering
 
-include("generate-data.jl")
-z = generateCPP(100, 2, 1.0, 3.0, [1.2, 1.8], [-2.2, 3], 4.0)
-println(z)
 
-
+z = generateCPPDataset(100, 2, 1.0, 3.0, [1.2, 1.8], [-2.2, 3], 4.0)
+# println(z)
+saveCPPDataset("/home/wikash/tmp/", 100, z, 1)
+saveCPPDataset("/home/wikash/tmp/", 100, z, 2)
+saveCPPDataset("/home/wikash/tmp/", 100, z, 2, 1.0, 3.0, [1.2, 1.8], [-2.2, 3], 4.0)
 # @everywhere @time sleep(3)
 # @everywhere info(gamma[2])
 # @parallel for i=1:4

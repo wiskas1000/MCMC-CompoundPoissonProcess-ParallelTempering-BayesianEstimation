@@ -1,7 +1,7 @@
 # W. SEWLAL 1383337
 module FileIOExtensionsCPP
 # using JLD2
-export checkDirectory, checkFile, makeDirectory, proposeFilename, getFilename, loadFile, setupPath, checkProjectFiles
+export checkDirectory, checkFile, makeDirectory, proposeFilenamePath, getFilename, loadFile, setupPath, checkProjectFiles
 export pathFigures, pathSavedZ, pathSavedResults, pathSavedLogs, pathTMPStream
 
 const today = string(Dates.today())
@@ -116,11 +116,11 @@ function getLastFilenameCounter(fnameBase::AbstractString, fnameExtension::Abstr
 end
 
 """
-proposeFilename(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
+proposeFilenamePath(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
 
-Proposes a filename for saving a file. If the file exists, it will propose a new filename.
+Proposes a path/filename for saving a file. If the file exists, it will propose a new filename.
 """
-function proposeFilename(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
+function proposeFilenamePath(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
     checkDirectory(dir)
     fname::AbstractString = string(fnameBase, "-", 1, fnameExtension) # not needed
     !isfile(joinpath(dir, fname)) && return joinpath(dir, fname) # not needed
