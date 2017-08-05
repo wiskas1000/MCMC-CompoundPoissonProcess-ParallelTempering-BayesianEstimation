@@ -1,6 +1,6 @@
 # W. SEWLAL 1383337
 module FileIOExtensionsCPP
-# using JLD2
+using JLD2
 export checkDirectory, checkFile, makeDirectory, proposeFilenamePath, getFilename, loadFile, setupPath, checkProjectFiles
 export pathFigures, pathSavedZ, pathSavedResults, pathSavedLogs, pathTMPStream
 
@@ -26,6 +26,11 @@ function checkFile(fname::AbstractString, dir::AbstractString)
     !isfile(joinpath(dir, fname)) && throw(ArgumentError(string("File", fname, " not found")))
     return
 end
+function checkFile(fnamepath::AbstractString)
+    !isfile(fnamepath) && throw(ArgumentError(string("File", fname, " not found")))
+    return
+end
+
 
 """
 makeDirectory(dir::AbstractString)
@@ -66,6 +71,7 @@ function getLastFilename(fnameBase::AbstractString, fnameExtension::AbstractStri
     counter::Int64 = 1
     fname::AbstractString = string(fnameBase, "-", counter, fnameExtension)
     checkFile(fname, dir)
+    lastfname = joinpath(dir, fname)
 
     while isfile(joinpath(dir, fname))
         lastfname = joinpath(dir, fname)
@@ -131,14 +137,30 @@ function proposeFilenamePath(fnameBase::AbstractString, fnameExtension::Abstract
     return joinpath(dir, fname)
 end
 
-
-### Possible extension: fnameZ = latestFName(fnameZbase, fnameZextension, savedZPath), which 1. checkFile(fnameZ, savedZPath), 2. gives a warning if multiple savefiles are present and 3. returns the last savefile filename.
 function loadFile(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
     checkDirectory(dir)
-    fname::AbstractString = string(fnameBase, fnameExtension)
-    checkFile(fname, dir)
-    return load(joinpath(dir, fname))
+    fnamepath = getFilename(fnameBase, fnameExtension, dir)
+    info(string("Attempting to load file ", fnamepath))
+    checkFile(fnamepath)    
+    return load(fnamepath)
 end
+
+function loadFile(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString, version::Int64)
+    checkDirectory(dir)
+    fnamepath = getFilename(fnameBase, fnameExtension, dir, version)
+    info(string("Attempting to load file ", fnamepath))
+    checkFile(fnamepath)    
+    return load(fnamepath)
+end
+
+
+### Possible extension: fnameZ = latestFName(fnameZbase, fnameZextension, savedZPath), which 1. checkFile(fnameZ, savedZPath), 2. gives a warning if multiple savefiles are present and 3. returns the last savefile filename.
+# function loadFile(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)
+#     checkDirectory(dir)
+#     fname::AbstractString = string(fnameBase, fnameExtension)
+#     checkFile(fname, dir)
+#     return load(joinpath(dir, fname))
+# end
 
 
 function fnameNew(fnameBase::AbstractString, fnameExtension::AbstractString, dir::AbstractString)

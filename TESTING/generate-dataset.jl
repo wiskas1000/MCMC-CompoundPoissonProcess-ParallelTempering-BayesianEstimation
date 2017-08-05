@@ -44,7 +44,7 @@ end
 function saveCPPDataset(dir::AbstractString, N::Int64, z::Array{Float64, 1}, configuration::Int64)
     savepath = joinpath(dir, string("configuration", configuration))
     makeDirectory(savepath)
-    fnameBase = getCPPDatasetFilenameBase(dir, N, z, configuration)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, configuration)
     fnameExtension = ".jld2"
     fnamepath = proposeFilenamePath(fnameBase, fnameExtension, savepath)
     save(fnamepath, "z", z)
@@ -54,14 +54,14 @@ end
 function saveCPPDataset(dir::AbstractString, N::Int64, z::Array{Float64, 1}, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)
     savepath = joinpath(dir, "manual")
     makeDirectory(savepath)
-    fnameBase = getCPPDatasetFilenameBase(dir, N, z, J, Delta, labda, psi, mu, tau)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, J, Delta, labda, psi, mu, tau)
     fnameExtension = ".jld2"
     fnamepath = proposeFilenamePath(fnameBase, fnameExtension, savepath)
     save(fnamepath, "z", z)
     return
 end
 
-function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, z::Array{Float64, 1}, configuration::Int64)::AbstractString
+function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, configuration::Int64)::AbstractString
     if (N < 1000)
         fnameBase = string("zCPP-c", configuration, "-N-", N)
     else
@@ -70,7 +70,7 @@ function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, z::Array{Float
     return fnameBase
 end
 
-function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, z::Array{Float64, 1}, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::AbstractString
+function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::AbstractString
     if (N < 1000)
         fnameBase = string("zCPP-manual-N-", N)
     else
@@ -86,7 +86,42 @@ end
 
 #     return
 # end
+function loadCPPDataset(dir::AbstractString, N::Int64, configuration::Int64)::Array{Float64, 1}
+    loadpath = joinpath(dir, string("configuration", configuration))
+    checkDirectory(loadpath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, configuration)
+    fnameExtension = ".jld2"    
+    loadedvars = loadFile(fnameBase, fnameExtension, loadpath)
+    return loadedvars["z"]
+end
 
+function loadCPPDataset(dir::AbstractString, N::Int64, configuration::Int64, version::Int64)::Array{Float64, 1}
+    loadpath = joinpath(dir, string("configuration", configuration))
+    checkDirectory(loadpath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, configuration)
+    fnameExtension = ".jld2"    
+    loadedvars = loadFile(fnameBase, fnameExtension, loadpath, version)
+    return loadedvars["z"]
+end
+
+
+function loadCPPDataset(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::Array{Float64, 1}
+    loadpath = joinpath(dir, "manual")
+    checkDirectory(loadpath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, J, Delta, labda, psi, mu, tau)
+    fnameExtension = ".jld2"
+    loadedvars = loadFile(fnameBase, fnameExtension, loadpath)
+    return loadedvars["z"]
+end
+
+function loadCPPDataset(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64, version::Int64)::Array{Float64, 1}
+    loadpath = joinpath(dir, "manual")
+    checkDirectory(loadpath)
+    fnameBase = getCPPDatasetFilenameBase(dir, N, J, Delta, labda, psi, mu, tau)
+    fnameExtension = ".jld2"
+    loadedvars = loadFile(fnameBase, fnameExtension, loadpath, version)
+    return loadedvars["z"]
+end
 
 ######### DEPRECATED FUNCTIONS BELOW #########
 

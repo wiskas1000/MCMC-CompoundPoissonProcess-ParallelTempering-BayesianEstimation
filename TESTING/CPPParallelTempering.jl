@@ -4,7 +4,7 @@ using Distributions
 using FileIOExtensionsCPP
 
 include("generate-dataset.jl")
-export generateCPPDataset, saveCPPDataset
+export generateCPPDataset, saveCPPDataset, loadCPPDataset
 
 # include("parallel-startup.jl")
 # include("MH-main-functions.jl")
