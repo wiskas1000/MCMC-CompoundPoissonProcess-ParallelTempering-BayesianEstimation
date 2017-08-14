@@ -38,6 +38,71 @@ function generateCPPDataset(N::Int64, J::Int64, Delta::Float64, labda::Float64, 
     z = original_z[1:nonzeroCounter]
     return z
 end
+function generateCPPDataset(N::Int64, configuration::Int64)::Array{Float64, 1}
+    J, Delta, labda, psi, mu, tau = getConfigParameters(configuration)
+    return generateCPPDataset(N, J, Delta, labda, psi, mu, tau)
+end
+
+# CHANGE pwd() into basepath
+function getConfigParameters(configuration::Int64)
+    if configuration == 1
+        J = 2;
+        Delta = 1.0;
+        psi = [0.3, 0.7];
+        labda = 1.0;
+        mu  = [-2.0, 1.5];
+        tau = 9.0;
+        return J, Delta, labda, psi, mu, tau
+    elseif configuration == 2
+        J = 2;
+        Delta = 1.0;
+        psi = [1.8, 4.2];
+        labda = 6.0;
+        mu  = [-2.0, 1.5];
+        tau = 9.0;
+        return J, Delta, labda, psi, mu, tau
+    elseif configuration == 3
+        J = 2;
+        Delta = 1.0;
+        psi = [0.8, 0.2];
+        labda = 1.0;
+        mu  = [2.0, -1.0];
+        tau = 1.0;
+        return J, Delta, labda, psi, mu, tau
+    elseif configuration == 4
+        J = 2;
+        Delta = 1.0;
+        psi = [4.8, 1.2];
+        labda = 6.0;
+        mu  = [2.0, -1.0];
+        tau = 1.0;
+        return J, Delta, labda, psi, mu, tau
+    elseif configuration == 5
+        J = 4;
+        Delta = 1.0;
+        psi = [0.3, 0.4, 0.2, 0.1];
+        labda = 1.0;
+        mu  = [-3.0, 0.5, 1.5, 5.0];
+        tau = 9.0;
+        return J, Delta, labda, psi, mu, tau
+    elseif configuration == 6
+        J = 4;
+        Delta = 1.0;
+        psi = [0.9, 1.2, 0.6, 0.3];
+        labda = 3.0;
+        mu  = [-3.0, 0.5, 1.5, 5.0];
+        tau = 9.0;
+        return J, Delta, labda, psi, mu, tau
+    else
+        errorMsg = string("Configuration ", configuration, " not found")
+        throw(ArgumentError(errorMsg))
+    end
+end
+    # basedir = joinpath(pwd(), "configurations")
+    # fname = string("dataset-z-configuration-", configuration, ".jl")
+    # include(joinpath(basedir, fname))
+
+
 # function initializeZ(N::Int64, J::Int64, Delta::Float64, param::MHiterationParameters)
 # param::MHiterationParameters
 
@@ -81,11 +146,6 @@ function getCPPDatasetFilenameBase(dir::AbstractString, N::Int64, J::Int64, Delt
 end
 
 
-# function saveCPPDataset(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)
-#     fnameBase = string("zCPP")
-
-#     return
-# end
 function loadCPPDataset(dir::AbstractString, N::Int64, configuration::Int64)::Array{Float64, 1}
     loadpath = joinpath(dir, string("configuration", configuration))
     fnameBase = getCPPDatasetFilenameBase(dir, N, configuration)
@@ -101,8 +161,6 @@ function loadCPPDataset(dir::AbstractString, N::Int64, configuration::Int64, ver
     loadedvars = loadFile(fnameBase, fnameExtension, loadpath, version)
     return loadedvars["z"]
 end
-
-
 function loadCPPDataset(dir::AbstractString, N::Int64, J::Int64, Delta::Float64, labda::Float64, psi::Array{Float64, 1}, mu::Array{Float64, 1}, tau::Float64)::Array{Float64, 1}
     loadpath = joinpath(dir, "manual")
     fnameBase = getCPPDatasetFilenameBase(dir, N, J, Delta, labda, psi, mu, tau)
